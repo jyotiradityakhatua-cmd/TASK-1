@@ -55,7 +55,7 @@ def create_post(post_data: dict):
     return "Post created successfully"
 
 def get_feed(user_id: str):
-    conn = sqlite3.connect(r"/Users/mobcoderid-225/Desktop/TASK-1/Task1/database.db")
+    conn= get_connection()
     cursor = conn.cursor()
     cursor.execute("""
     SELECT posts.content
@@ -66,3 +66,41 @@ def get_feed(user_id: str):
     feed = cursor.fetchall()
     conn.close()
     return {"feed": feed}
+
+def like_post(post_id: str, user_id: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO likes (post_id, user_id) VALUES (?, ?)", (post_id, user_id))
+    conn.commit()
+    return "Post liked successfully"
+
+def comment_on_post(post_id: str, user_id: str, comment: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO comments (post_id, user_id, comment) VALUES (?, ?, ?)", (post_id, user_id, comment))
+    conn.commit()
+    return "Comment added successfully"
+
+def delete_comment(comment_id: str, user_id: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM comments WHERE id = ? AND user_id = ?", (comment_id, user_id))
+    conn.commit()
+    return "Comment deleted successfully"
+
+def delete_post(post_id: str, user_id: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM posts WHERE id = ? AND user_id = ?", (post_id, user_id))
+    conn.commit()
+    return "Post deleted successfully"
+
+def unfollow_user(target_user_id: str, current_user_id: str):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM followers WHERE user_id = ? AND follower_id = ?", (target_user_id, current_user_id))
+    conn.commit()
+    return "Unfollowed successfully"
+
+
+
